@@ -200,6 +200,8 @@ class Summation(TensorOp):
         grd_shp = list(out_grad.shape)
         for i in sorted(self.axes or range(len(shape)), reverse=True):
             grd_shp.insert(i, 1)
+        if not grd_shp:
+            return out_grad.broadcast_to(shape)
         return out_grad.reshape(grd_shp).broadcast_to(shape)
 
 

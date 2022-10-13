@@ -398,9 +398,15 @@ def compute_gradient_of_variables(output_tensor, out_grad):
     # Traverse graph in reverse topological order given the output_node that we are taking gradient wrt.
     reverse_topo_order = list(reversed(find_topo_sort([output_tensor])))
 
-    ### BEGIN YOUR SOLUTION
-    raise NotImplementedError()
-    ### END YOUR SOLUTION
+    for n in reverse_topo_order:
+        vi = sum(node_to_output_grads_list[n])
+        n.grad = vi
+        for i, k in enumerate(n.inputs):
+            if len(n.inputs)>1:
+                vki = n.op.gradient(vi, n)[i]
+            else:
+                vki = n.op.gradient(vi, n)
+            node_to_output_grads_list[k] = node_to_output_grads_list.pop(k, []) + [vki]
 
 
 def find_topo_sort(node_list: List[Value]) -> List[Value]:
